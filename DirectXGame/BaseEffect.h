@@ -9,5 +9,7 @@ public:
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 	virtual bool IsFinished() const = 0;
-
+	void SetSpeedX(float speed) { speedX_ = speed; }
+protected:
+	float speedX_ = 0.1f;
 };

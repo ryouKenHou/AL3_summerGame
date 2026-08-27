@@ -2,6 +2,7 @@
 #include <KamataEngine.h>
 #include <algorithm>
 #include <random>
+#include <assert.h>
 enum class LRDirection {
 	kRight,
 	kLeft,
@@ -79,6 +80,15 @@ inline float EaseOut(float start, float end, float t) {
 inline float EaseIn(float start, float end, float t) {
 	t = std::clamp(t, 0.0f, 1.0f);
 	return start + (end - start) * static_cast<float>(std::pow(t, 3));
+}
+
+inline float EaseInOut(float start, float end, float t) {
+	t = std::clamp(t, 0.0f, 1.0f);
+	if (t < 0.5f) {
+		return EaseIn(start, (start + end) / 2.0f, t * 2.0f);
+	} else {
+		return EaseOut((start + end) / 2.0f, end, (t - 0.5f) * 2.0f);
+	}
 }
 
 class Random {

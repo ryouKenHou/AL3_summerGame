@@ -1,10 +1,7 @@
 #pragma once
 #include "KamataEngine.h"
-#include "Player.h"
-#include "Enemy.h"
-#include "ShieldEnemy.h"
+#include "Player.hpp"
 #include "Skydome.h"
-#include "MapChipField.h"
 #include "vector"
 #include "CameraController.h"
 #include "helper.hpp"
@@ -39,12 +36,8 @@ private:
 
 	// ブロックのモデル
 	KamataEngine::Model* blockModel_ = nullptr;
+	KamataEngine::Model* bonusBlockModel_ = nullptr;
 	std::vector<std::vector<KamataEngine::WorldTransform*>> blockWorldTransforms_;
-
-	// 敵キャラクター
-	int enemyMax_ = 3;
-	std::list<BaseEnemy*> enemies_;
-	KamataEngine::Model* enemyModel_ = nullptr;
 
 	// tate敵キャラクター
 	int shieldEnemyMax_ = 1;
@@ -53,6 +46,10 @@ private:
 	// カメラ
 	CameraController* cameraController_ = nullptr;
 
+	// 敵キャラクター
+	int enemyMax_ = 10;
+	std::list<BaseEnemy*> enemies_;
+
 	// デバッグカメラ
 	KamataEngine::DebugCamera* debugCamera_ = nullptr;
 	bool isDebugCameraActive_ = false;
@@ -60,9 +57,6 @@ private:
 	// スカイドーム
 	Skydome* skydome_ = nullptr;
 	KamataEngine::Model* skydomeModel_ = nullptr;
-
-	// マップチップフィールド
-	MapChipField* mapChipField_;
 
 	bool isFinished_ = false;
 
@@ -73,6 +67,35 @@ private:
 	KamataEngine::Model* guardEffectModel_ = nullptr;
 
 	bool reloadRequested_ = false;
+
+	float ObstacleSpawnTimer_ = 0.f;
+	float ObstacleSpawnInterval_ = 120.f; // 障害物のスポーン間隔（秒）
+
+	uint32_t BGMSoundHandle_ = 0;
+	uint32_t BoomSoundHandle_ = 0;
+	uint32_t PointSoundHandle_ = 0;
+	uint32_t BGMPlayHandle_ = 0;
+
+	uint32_t numsTextureHandle = 0;
+	KamataEngine::Sprite* numsSprite[10] = {nullptr};
+	uint32_t ScoreTextureHandle = 0;
+	KamataEngine::Sprite* scoreSprite = nullptr;
+	uint32_t tutorialTextureHandle = 0;
+	KamataEngine::Sprite* tutorialSprite = nullptr;
+
+	KamataEngine::Vector2 tutorialBaseSize_ = {157.f, 32.f};
+	KamataEngine::Vector2 tutorialBigSize_ = {157.f*2, 32.f*2};
+	KamataEngine::Vector2 tutorialBasePosition_ = {1100.f, 650.f};
+KamataEngine::Vector2 tutorialFirstPosition_ = {300.f, 400.f};
+	int tutorialFrameCounter_ = 0;
+	int tutorialFrameDuration_ = 250; // 3秒間表示
+
+	int score_ = 0;
+	int frameCounter_ = 0;
+
+	int stageFlag_ = 0;
+
+	float speedfactor_ = 1.0f;
 
 public:
 	GameScene();
@@ -87,8 +110,6 @@ public:
 	// 描画
 	void Draw();
 
-	void GenerateFieldObjects();
-
 	void CheckAllCollisions();
 
 	void ChangePhase();
@@ -100,4 +121,27 @@ public:
 	void CreateGuardEffect(const KamataEngine::Vector3& position);
 
 	bool IsReloadRequested() const { return reloadRequested_; }
+
+	void SpawnOneHoleObstacle();
+	void SpawnTwoHoleObstacle();
+	int SpawnMultipleObstacleArea(bool isBonuce1 = false);
+
+	void HandleSpawningObstacles();
+
+	void PlayPointSound() {
+		//if (PointSoundHandle_ != 0) {
+			KamataEngine::Audio::GetInstance()->PlayWave(PointSoundHandle_);
+		//}
+	}
+
+	void PlayBoomSound() {
+		//if (BoomSoundHandle_ != 0) {
+			KamataEngine::Audio::GetInstance()->PlayWave(BoomSoundHandle_, false, 0.5f);
+		//}
+	}
+
+	void AddScore(int points) {
+		score_ += points; }
+
+	int GetScore() const { return score_; }
 };

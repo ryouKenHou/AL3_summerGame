@@ -39,9 +39,9 @@ void Fade::Draw() {
 	if (status_ == Status::kNone) {
 		return;
 	}
-	KamataEngine::Sprite::PreDraw();
+	
 	sprite_->Draw();
-	KamataEngine::Sprite::PostDraw();
+	
 }
 
 void Fade::Start(Status status, float duration) {

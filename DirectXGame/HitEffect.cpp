@@ -15,74 +15,38 @@ HitEffect* HitEffect::Create(KamataEngine::Vector3 position) {
 void HitEffect::Initialize(KamataEngine::Vector3 position) {
 	circleWorldTransform_.Initialize();
 	circleWorldTransform_.translation_ = position;
-	circleWorldTransform_.scale_ = {1.f, 1.f, 1.f};
+	circleWorldTransform_.scale_ = {0.5f, 0.5f, 0.5f};
 	circleWorldTransform_.matWorld_ = CreateAffineMatrix(circleWorldTransform_.scale_, circleWorldTransform_.rotation_, circleWorldTransform_.translation_);
 	circleWorldTransform_.TransferMatrix();
 
 	// ellipseWorldTransforms_
 	Random random;
 	random.Initialize();
-	for (KamataEngine::WorldTransform& transform : ellipseWorldTransforms_) {
-		transform.translation_ = position;
-		transform.scale_ = {0.1f, 2.f, 1.f};
-		transform.rotation_ = {0.f, 0.f, random.GetRandomFloat(-3.14159f, 3.14159f)};
-		transform.matWorld_ = CreateAffineMatrix(transform.scale_, transform.rotation_, transform.translation_);
-		transform.Initialize();
-	}
+
+	// ランダムな回転速度と移動速度を設定
+	rotateVelocity = {random.GetRandomFloat(-0.2f, 0.2f), random.GetRandomFloat(-0.2f, 0.2f), random.GetRandomFloat(-0.2f, 0.2f)};
+	translateVelocity = {random.GetRandomFloat(-0.3f, 0.01f), random.GetRandomFloat(-0.2f, 0.2f), random.GetRandomFloat(-0.2f, 0.2f)};
 }
 
 void HitEffect::Update() {
 	timer_++;
-	switch (status_) {
-	case HitEffect::Status::kFadeIn: {
-		
-		alpha_ = 1.f;
-		float scale = EaseOut(0.f, 1.0f, timer_ / duration_);
-		float scale1 = EaseOut(0.f, 2.0f, timer_ / duration_);
-		float scale2 = EaseOut(0.f, 0.1f, timer_ / duration_);
 
-		circleWorldTransform_.scale_ = {scale, scale, 1.f};
+	circleWorldTransform_.rotation_ += rotateVelocity;
+	circleWorldTransform_.translation_ += translateVelocity;
 
-		for (KamataEngine::WorldTransform& transform : ellipseWorldTransforms_) {
-			transform.scale_ = {scale2, scale1, 1.0f};
-		}
-
-		if (timer_ >= duration_) {
-			timer_ = 0;
-			status_ = HitEffect::Status::kFadeOut;
-		}
-
-		break;
-	}
-	case HitEffect::Status::kFadeOut:
-		alpha_ = 1.f-  std::clamp(float(timer_ / duration_), 0.f, 1.f);
-
-		if (timer_ >= duration_) {
-			timer_ = 0;
-			status_ = HitEffect::Status::kFinished;
-		}
-
-		
-		
-		break;
-	}
+	rotateVelocity = {rotateVelocity.x * 0.95f, rotateVelocity.y * 0.95f, rotateVelocity.z * 0.95f};
+	translateVelocity = {translateVelocity.x * 0.95f, translateVelocity.y * 0.95f, translateVelocity.z * 0.95f};
+	circleWorldTransform_.scale_ = {EaseOut(0.5f, 0.0f, timer_ / duration_), EaseOut(0.5f, 0.0f, timer_ / duration_), EaseOut(0.5f, 0.0f, timer_ / duration_)};
 
 	circleWorldTransform_.matWorld_ = CreateAffineMatrix(circleWorldTransform_.scale_, circleWorldTransform_.rotation_, circleWorldTransform_.translation_);
 	circleWorldTransform_.TransferMatrix();
 
-	for (KamataEngine::WorldTransform& transform : ellipseWorldTransforms_) {
-		transform.matWorld_ = CreateAffineMatrix(transform.scale_, transform.rotation_, transform.translation_);
-		transform.TransferMatrix();
-	}
 }
 
 void HitEffect::Draw() {
 	if (model_ && camera_) {
-		model_->SetAlpha(alpha_);
+		//model_->SetAlpha(alpha_);
 		KamataEngine::DebugText::GetInstance()->ConsolePrintf("draw\n");
 		model_->Draw(circleWorldTransform_, *camera_);
-		for (const KamataEngine::WorldTransform& transform : ellipseWorldTransforms_) {
-			model_->Draw(transform, *camera_);
-		}
 	}
 }
