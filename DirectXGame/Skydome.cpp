@@ -1,4 +1,5 @@
 #include "Skydome.h"
+#include "helper.hpp"
 
 using namespace KamataEngine;
 
@@ -24,6 +25,9 @@ void Skydome::Initialize(Model* model, Camera* camera) {
 
 void Skydome::Update() {
 	// 更新処理
+	worldTransform_.rotation_.y -= 0.01f * speedFactor_;
+	worldTransform_.matWorld_ = CreateAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+
 	worldTransform_.TransferMatrix();
 }
 

@@ -6,21 +6,17 @@
 
 class HitEffect final : public BaseEffect {
 private:
-	enum class Status {
-		kFadeIn,
-		kFadeOut,
-		kFinished,
-	};
-
 	KamataEngine::WorldTransform circleWorldTransform_;
-	std::array<KamataEngine::WorldTransform, 2> ellipseWorldTransforms_;
-	Status status_ = Status::kFadeIn;
+
 	float timer_ = 0;
-	float duration_ = 20.f; // フェードの継続時間（フレーム）
-	float alpha_ = 1.f;
+	float duration_ = 60.f; // フェードの継続時間（フレーム）
+	float alpha_ = 0.8f;
 
 	static KamataEngine::Model* model_;
 	static KamataEngine::Camera* camera_;
+
+	KamataEngine::Vector3 rotateVelocity;
+	KamataEngine::Vector3 translateVelocity;
 
 
 public:
@@ -32,5 +28,5 @@ public:
 	static void SetCamera(KamataEngine::Camera* camera) { camera_ = camera; }
 	static HitEffect* Create(KamataEngine::Vector3 position);
 
-	bool IsFinished() const override { return status_ == Status::kFinished; }
+	bool IsFinished() const override { return timer_ >= duration_; }
 };

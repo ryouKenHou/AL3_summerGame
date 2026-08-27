@@ -8,6 +8,8 @@ using namespace KamataEngine;
 GameScene* gameScene = nullptr;
 TitleScene* titleScene = nullptr;
 
+int maxScore = 0;
+
 enum class Scene {
 	kUnkown = 0,
 
@@ -32,11 +34,14 @@ void ChangeScene() {
 		break;
 	case Scene::kGame:
 		if (gameScene->IsFinished()) {
+			int score = gameScene->GetScore();
+			maxScore = max(maxScore, score);
 			scene = Scene::kTitle;
 			delete gameScene;
 			gameScene = nullptr;
 			titleScene = new TitleScene();
 			titleScene->Initialize();
+			titleScene->SetScore(maxScore);
 		} else if (gameScene->IsReloadRequested()) {
 			// ゲームシーンをリロードする
 			delete gameScene;
@@ -73,13 +78,16 @@ void DrawScene() {
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// KamataEngineの初期化
-	KamataEngine::Initialize(L"LC1A_33_リョウ_ケン_ホウ");
+	KamataEngine::Initialize(L"LE2A_28_リョウ_ケン_ホウ_CrossTheSpace");
 
 	// DirectXCommonインスタンスの取得
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	titleScene = new TitleScene();
 	titleScene->Initialize();
+
+	/* gameScene = new GameScene();
+	gameScene->Initialize();*/
 
 	scene = Scene::kTitle;
 
@@ -91,7 +99,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		if (KamataEngine::Update()) {
 			break;
 		}
-
+		
 		// ImGui受付開始
 		imGuiManager->Begin();
 

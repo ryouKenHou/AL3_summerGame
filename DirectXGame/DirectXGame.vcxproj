@@ -156,15 +156,11 @@
   <ItemGroup>
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="DeathParticles.cpp" />
-    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Fade.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GuardEffect.cpp" />
     <ClCompile Include="HitEffect.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MapChipField.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="ShieldEnemy.cpp" />
     <ClCompile Include="Skydome.cpp" />
     <ClCompile Include="TitleScene.cpp" />
   </ItemGroup>
@@ -270,15 +266,12 @@
     <ClInclude Include="BaseEnemy.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="DeathParticles.h" />
-    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Fade.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GuardEffect.h" />
     <ClInclude Include="helper.hpp" />
     <ClInclude Include="HitEffect.h" />
-    <ClInclude Include="MapChipField.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="ShieldEnemy.h" />
+    <ClInclude Include="Player.hpp" />
     <ClInclude Include="Skydome.h" />
     <ClInclude Include="TitleScene.h" />
   </ItemGroup>
